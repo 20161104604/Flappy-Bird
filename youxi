@@ -1,0 +1,68 @@
+import SpriteKit
+
+import SpriteKit
+
+enum picture: CGFloat {
+    case background//背景
+    case barrier//障碍
+    case prospects//前景
+    case role//角色
+    case UI//记分板、游戏提示等
+}
+enum game {
+    case menu //菜单
+    case course //教程
+    case play //游戏
+    case fall //下落
+    case score //分数
+    case end //结束
+}
+struct physics {
+    static let 无: UInt32 = 0
+    static let GameRole: UInt32 = 0b1  // 二进制：1
+    static let GameBarrier: UInt32  = 0b10  // 二进制：2
+    static let GameGround: UInt32   = 0b100  // 二进制：4
+
+}
+
+class GameScene: SKScene,SKPhysicsContactDelegate {
+    
+    let ProspectsNumber = 2//前景数
+    let GroundSpeed:CGFloat = -150.0//地面移动速度
+    let gravity:CGFloat = -1500.0//重力
+    let upspeed:CGFloat = 500.0//上冲速度
+    var rolespeed = CGPoint.zero//小鸟速度
+    let min:CGFloat = 0.1//底部障碍最小乘数
+    let max:CGFloat = 0.2//底部障碍最大乘数
+    let a:CGFloat = 3.5
+    let FirstBarrier:TimeInterval = 2
+    let EveryBarrier:TimeInterval = 1.5
+    let UpFree:CGFloat = 20.0//顶部留空
+    let 字体 = "AmericanTypewriter-Bold"
+    var lable:SKLabelNode!
+    var NowScore = 0
+    let wait = 0.3//延迟
+    
+    
+    var CarshGround = false //撞击地面初始值
+    var CarshBarrier = false //撞击障碍物初始值
+    var NowGame : game = .play
+    
+    let world = SKNode()//游戏整体
+    let hat = SKSpriteNode(imageNamed: "Sombrero")//帽子
+    var startpoint: CGFloat = 0//游戏起始点
+    var worldheight: CGFloat = 0//游戏整体高度
+    let role = SKSpriteNode(imageNamed: "Bird0")
+    var lasttime:TimeInterval = 0//上一次更新的时间
+    var dt:TimeInterval = 0
+    
+    // 添加音效
+    let 叮的音效 = SKAction.playSoundFileNamed("ding.wav", waitForCompletion: false)
+    let 拍打的音效 = SKAction.playSoundFileNamed("flapping.wav", waitForCompletion: false)
+    let 摔倒的音效 = SKAction.playSoundFileNamed("whack.wav", waitForCompletion: false)
+    let 下落的音效 = SKAction.playSoundFileNamed("falling.wav", waitForCompletion: false)
+    let 撞击地面的音效 = SKAction.playSoundFileNamed("hitGround.wav", waitForCompletion: false)
+    let 砰的音效 = SKAction.playSoundFileNamed("pop.wav", waitForCompletion: false)
+    let 得分的音效 = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
+
+    
